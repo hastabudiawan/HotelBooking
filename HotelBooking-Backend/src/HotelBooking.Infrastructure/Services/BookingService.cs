@@ -52,8 +52,7 @@ public class BookingService : IBookingService
         {
             // Kunci baris kamar sampai transaksi selesai. Permintaan lain untuk kamar yang sama
             // menunggu di sini, lalu membaca hasil yang sudah ter-commit.
-            await _db.Database.ExecuteSqlInterpolatedAsync(
-                $"SELECT 1 FROM Rooms WITH (UPDLOCK, ROWLOCK) WHERE Id = {roomId}", ct);
+            await _db.LockRoomAsync(roomId, ct);
 
             var nowUtc = _time.GetUtcNow().UtcDateTime;
 
@@ -116,6 +115,7 @@ public class BookingService : IBookingService
         int userId, int bookingId, CancellationToken ct = default)
     {
         var booking = await _db.Bookings
+            .Include(b => b.Payments)
             .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId, ct);
 
         if (booking is null)
@@ -126,7 +126,6 @@ public class BookingService : IBookingService
                 $"Booking dengan status {booking.Status} tidak bisa dibatalkan.");
 
         // Kebijakan sederhana: booking yang sudah dibayar hanya bisa dibatalkan sebelum hari check-in.
-        // Pengembalian dana simulasi ditambahkan di Panduan 05.
         if (booking.Status == BookingStatus.Confirmed && booking.CheckIn <= BookingRules.Today(_time))
             return ServiceResult<BookingDto>.Conflict(
                 "Booking yang sudah dibayar tidak bisa dibatalkan pada atau setelah tanggal check-in.");
@@ -134,13 +133,18 @@ public class BookingService : IBookingService
         booking.Status = BookingStatus.Cancelled;
         booking.ExpiresAt = null;
 
+        // Pengembalian dana simulasi: refund penuh untuk semua pembayaran yang berhasil.
+        foreach (var payment in booking.Payments.Where(p => p.Status == PaymentStatus.Paid))
+            payment.Status = PaymentStatus.Refunded;
+
         try
         {
+            // Satu SaveChanges = satu transaksi: status booking dan refund berubah bersamaan.
             await _db.SaveChangesAsync(ct);
         }
         catch (DbUpdateConcurrencyException)
         {
-            // RowVersion berubah: booking diubah proses lain (misalnya pembayaran) saat kita membacanya.
+            // RowVersion berubah: booking diubah proses lain (pembayaran atau expiry) saat kita membacanya.
             return ServiceResult<BookingDto>.Conflict(
                 "Booking baru saja berubah. Muat ulang lalu coba lagi.");
         }

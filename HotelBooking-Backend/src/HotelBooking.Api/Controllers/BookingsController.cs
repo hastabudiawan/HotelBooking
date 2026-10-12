@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using HotelBooking.Application.Bookings;
+using HotelBooking.Application.Payments;
 using HotelBooking.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace HotelBooking.Api.Controllers;
 public class BookingsController : ApiControllerBase
 {
     private readonly IBookingService _service;
+    private readonly IPaymentService _payments;
 
-    public BookingsController(IBookingService service)
+    public BookingsController(IBookingService service, IPaymentService payments)
     {
         _service = service;
+        _payments = payments;
     }
 
     // Id pengguna diambil dari claim "sub" di token (lihat Panduan 02), bukan dari body request,
@@ -49,5 +52,17 @@ public class BookingsController : ApiControllerBase
     public async Task<ActionResult<BookingDto>> Cancel(int id, CancellationToken ct)
     {
         return ToActionResult(await _service.CancelAsync(CurrentUserId, id, ct));
+    }
+
+    [HttpPost("{id:int}/pay")]
+    public async Task<ActionResult<PaymentResultDto>> Pay(int id, PayBookingRequest request, CancellationToken ct)
+    {
+        return ToActionResult(await _payments.PayAsync(CurrentUserId, id, request, ct));
+    }
+
+    [HttpGet("{id:int}/payments")]
+    public async Task<ActionResult<IReadOnlyList<PaymentDto>>> Payments(int id, CancellationToken ct)
+    {
+        return ToActionResult(await _payments.GetByBookingAsync(CurrentUserId, id, ct));
     }
 }
