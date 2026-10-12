@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HotelBooking.Application.Bookings;
 
 namespace HotelBooking.Infrastructure;
 
@@ -36,7 +37,9 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRoomTypeService, RoomTypeService>();
         services.AddScoped<IRoomService, RoomService>();
-
+                services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IAvailabilityService, AvailabilityService>();
+        services.AddScoped<IBookingService, BookingService>();
         return services;
     }
 }
