@@ -1,5 +1,6 @@
 using HotelBooking.Application.Auth;
 using HotelBooking.Application.Bookings;
+using HotelBooking.Application.Operations;
 using HotelBooking.Application.Payments;
 using HotelBooking.Application.Rooms;
 using HotelBooking.Application.RoomTypes;
@@ -44,6 +45,8 @@ public static class DependencyInjection
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddHostedService<BookingExpiryService>();
+        services.AddScoped<IStaffBookingService, StaffBookingService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return services;
     }
