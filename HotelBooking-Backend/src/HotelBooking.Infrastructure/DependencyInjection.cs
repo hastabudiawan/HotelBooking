@@ -1,7 +1,10 @@
 using HotelBooking.Application.Auth;
+using HotelBooking.Application.Rooms;
+using HotelBooking.Application.RoomTypes;
 using HotelBooking.Infrastructure.Auth;
 using HotelBooking.Infrastructure.Identity;
 using HotelBooking.Infrastructure.Persistence;
+using HotelBooking.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +34,8 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
         services.AddScoped<JwtTokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IRoomTypeService, RoomTypeService>();
+        services.AddScoped<IRoomService, RoomService>();
 
         return services;
     }

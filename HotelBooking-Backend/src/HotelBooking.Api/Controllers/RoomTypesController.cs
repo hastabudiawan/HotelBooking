@@ -1,39 +1,55 @@
-using HotelBooking.Api.Dtos;
-using HotelBooking.Infrastructure.Persistence;
+using HotelBooking.Application.RoomTypes;
+using HotelBooking.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HotelBooking.Api.Controllers;
 
 [ApiController]
 [Route("api/room-types")]
-public class RoomTypesController : ControllerBase
+public class RoomTypesController : ApiControllerBase
 {
-    private readonly AppDbContext _db;
+    private readonly IRoomTypeService _service;
 
-    public RoomTypesController(AppDbContext db) => _db = db;
+    public RoomTypesController(IRoomTypeService service)
+    {
+        _service = service;
+    }
 
     [HttpGet]
-    public async Task<ActionResult<List<RoomTypeDto>>> GetAll(CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<RoomTypeDto>>> GetAll(CancellationToken ct)
     {
-        var items = await _db.RoomTypes
-            .AsNoTracking()
-            .OrderBy(x => x.BasePrice)
-            .Select(x => new RoomTypeDto(x.Id, x.Name, x.Slug, x.Description, x.BasePrice, x.Capacity, x.ImageUrl))
-            .ToListAsync(ct);
-
-        return Ok(items);
+        return Ok(await _service.GetAllAsync(ct));
     }
 
     [HttpGet("{slug}")]
     public async Task<ActionResult<RoomTypeDto>> GetBySlug(string slug, CancellationToken ct)
     {
-        var item = await _db.RoomTypes
-            .AsNoTracking()
-            .Where(x => x.Slug == slug)
-            .Select(x => new RoomTypeDto(x.Id, x.Name, x.Slug, x.Description, x.BasePrice, x.Capacity, x.ImageUrl))
-            .FirstOrDefaultAsync(ct);
+        return ToActionResult(await _service.GetBySlugAsync(slug, ct));
+    }
 
-        return item is null ? NotFound() : Ok(item);
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpPost]
+    public async Task<ActionResult<RoomTypeDto>> Create(CreateRoomTypeRequest request, CancellationToken ct)
+    {
+        var result = await _service.CreateAsync(request, ct);
+        if (!result.Succeeded)
+            return ToActionResult(result);
+
+        return CreatedAtAction(nameof(GetBySlug), new { slug = result.Data!.Slug }, result.Data);
+    }
+
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<RoomTypeDto>> Update(int id, UpdateRoomTypeRequest request, CancellationToken ct)
+    {
+        return ToActionResult(await _service.UpdateAsync(id, request, ct));
+    }
+
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    {
+        return ToNoContent(await _service.DeleteAsync(id, ct));
     }
 }
