@@ -1,7 +1,5 @@
 # Hotel Booking API
 
-[![CI](https://github.com/USERNAME/HotelBooking-Backend/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/HotelBooking-Backend/actions/workflows/ci.yml)
-
 Backend aplikasi pemesanan hotel berbasis **ASP.NET Core Web API (.NET 10)** dengan arsitektur berlapis, **Entity Framework Core**, dan **SQL Server**. Project portofolio untuk mendemonstrasikan desain backend .NET: pemodelan data, alur status booking, pencegahan double booking, dan aturan bisnis ketersediaan kamar.
 
 Frontend (Next.js, Tailwind CSS) dibuat terpisah di repository lain dan memanggil API ini.
@@ -402,65 +400,3 @@ Contoh respons `GET /api/room-types/deluxe`:
 }
 ```
 
----
-
-## Reset dan Bersih-bersih
-
-| Tujuan | Perintah | Efek |
-|---|---|---|
-| Kosongkan database Cara A | `docker compose down -v` lalu `docker compose up` | Data hilang, admin dibuat ulang oleh seeder |
-| Kosongkan database Cara B | `dotnet ef database drop --project src/HotelBooking.Infrastructure --startup-project src/HotelBooking.Api`, lalu `dotnet ef database update ...` | Data hilang, admin dibuat ulang saat API start |
-| Hapus container Cara B | `docker rm -f hotel-sqlserver` | Database Cara B hilang, buat ulang lewat Cara B langkah 1 |
-| Bersihkan cache Docker | `docker system prune` | Menghapus image dan cache yang tidak terpakai. Baca peringatannya dulu |
-| Hapus secrets | `dotnet user-secrets clear --project src/HotelBooking.Api` | Semua secrets proyek ini hilang |
-
----
-
-## Masalah Umum
-
-| Gejala | Penyebab dan solusi |
-|---|---|
-| `Cannot connect to the Docker daemon` | Docker Desktop belum menyala. Buka aplikasinya dan tunggu sampai "Running" |
-| `port is already allocated` | Port sudah dipakai proses lain. `docker ps` menunjukkan siapa. Port yang dipakai: 8080 (API compose), 1434 (database compose), 1433 (`hotel-sqlserver`), 5047 (`dotnet run`) |
-| `Login failed for user 'sa'` di compose | `SA_PASSWORD` di `.env` diubah setelah volume dibuat. Jalankan `docker compose down -v` lalu `up` lagi |
-| `Login failed for user 'sa'` di `dotnet run` | Password di connection string user-secrets berbeda dari password saat container `hotel-sqlserver` dibuat, atau containernya mati (`docker start hotel-sqlserver`) |
-| `Login failed ... Failed to open the explicitly specified database` sekali di awal log compose | Normal. Itu percobaan koneksi sebelum database dibuat oleh migrasi |
-| `Jwt:Key belum diatur` | Di Cara A, `JWT_KEY` di `.env` kosong atau kurang dari 32 karakter. Di Cara B, jalankan ulang `user-secrets set "Jwt:Key" ...` |
-| `Gagal membuat admin awal` | Password admin kurang kuat. Butuh minimal 8 karakter, huruf besar, huruf kecil, dan angka |
-| Admin tidak bisa login padahal password sudah diganti | Seeder tidak mengubah admin yang sudah ada. Kosongkan database (bagian Reset) |
-| Database compose tidak kunjung `healthy` di Mac | Tunggu 1 sampai 2 menit. Cek `docker compose logs db`, dan pastikan Rosetta aktif di Docker Desktop |
-| `A network-related or instance-specific error` di `dotnet run` | SQL Server belum siap atau mati. `docker start hotel-sqlserver`, tunggu beberapa detik |
-| `dotnet ef` tidak ditemukan | `dotnet tool install --global dotnet-ef`, lalu buka terminal baru |
-| Tes integrasi gagal dengan error Docker | Docker Desktop belum menyala |
-| Postman: `Could not get response` | Pakai Postman Desktop dan cek port di `baseUrl` |
-| Postman: 401 di tengah run | Token kedaluwarsa. Jalankan ulang dari folder `00 Setup` |
-
----
-
-## Catatan Keamanan
-
-- Jangan men-commit `.env`. Hanya `.env.example` (berisi nilai contoh) yang boleh masuk Git.
-- Jangan menempelkan password, kunci JWT, atau isi `user-secrets list` ke chat, issue, atau screenshot publik.
-- Password dan kunci di dokumen ini hanya untuk pengembangan lokal. Untuk server sungguhan, buat nilai baru yang acak dan simpan di pengelola secrets milik penyedia hosting, bukan di file.
-- Kalau ada password yang terlanjur tersebar, ganti: untuk `hotel-sqlserver`, hapus dan buat ulang containernya, lalu perbarui user-secrets. Untuk compose, ubah `.env` lalu `docker compose down -v`.
-
----
-
-## Roadmap
-
-1. ~~Autentikasi JWT dan role~~
-2. ~~CRUD tipe kamar dan kamar untuk admin~~
-3. ~~Ketersediaan kamar dan pembuatan booking~~
-4. ~~Pembayaran simulasi dan expired otomatis~~
-5. ~~Check-in, check-out, dan laporan okupansi~~
-6. ~~Unit test dan tes integrasi~~
-7. ~~Docker Compose dan GitHub Actions~~
-8. Frontend Next.js + Tailwind CSS (repository terpisah)
-
----
-
-## Penulis
-
-Dibuat oleh **Hasta**.
-
-- GitHub: [@USERNAME](https://github.com/USERNAME)
