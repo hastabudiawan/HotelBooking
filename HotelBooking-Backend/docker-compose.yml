@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64        # wajib di Mac Apple Silicon (jalan lewat emulasi, start-nya lambat)
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+    ports:
+      - "127.0.0.1:1434:1433"    # hanya bisa diakses dari komputermu sendiri
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=HotelBookingDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True"
+      Jwt__Key: ${JWT_KEY}
+      SeedAdmin__Email: ${ADMIN_EMAIL}
+      SeedAdmin__Password: ${ADMIN_PASSWORD}
+      Database__MigrateOnStartup: "true"
+      Cors__Origins__0: ${FRONTEND_ORIGIN:-http://localhost:3000}
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  sqldata:

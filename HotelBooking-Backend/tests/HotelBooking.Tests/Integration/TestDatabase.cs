@@ -36,8 +36,7 @@ internal static class TestDatabase
         }
         else
         {
-            var container = new MsSqlBuilder()
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            var container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
                 .Build();
 
             await container.StartAsync();

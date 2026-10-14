@@ -3,6 +3,7 @@ using HotelBooking.Infrastructure;
 using HotelBooking.Infrastructure.Auth;
 using HotelBooking.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
@@ -50,7 +51,18 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod());
 });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>("database");
+
 var app = builder.Build();
+
+// Migrasi otomatis hanya jika diminta (dipakai di Docker). Default: mati.
+if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 // Buat role dan akun admin awal (aman dijalankan berulang kali)
 await IdentitySeeder.SeedAsync(app.Services, app.Configuration);
@@ -59,6 +71,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
 }
 
 app.UseHttpsRedirection();
@@ -66,6 +79,7 @@ app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
 
