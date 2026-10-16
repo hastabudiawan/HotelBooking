@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { site } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
+import { getSession } from "@/lib/auth/session";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -41,16 +42,18 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getSession();
+
   return (
     <html
       lang="en"
       className={`${mulish.variable} ${raleway.variable} ${dancing.variable}`}
     >
       <body className="flex min-h-screen flex-col">
-        <Navbar />
+        <Navbar user={session ? { name: session.user.name } : null} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

@@ -6,16 +6,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
+import { logoutAction } from "@/lib/auth/actions";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Container } from "./Container";
+
+export type NavUser = { name: string };
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Navbar() {
+function SignOutButton({ className }: { className?: string }) {
+  return (
+    <form action={logoutAction}>
+      <button
+        type="submit"
+        className={cn("text-sm font-semibold text-ink hover:text-brand", className)}
+      >
+        Sign out
+      </button>
+    </form>
+  );
+}
+
+export function Navbar({ user }: { user: NavUser | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -28,6 +44,8 @@ export function Navbar() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
+
+  const firstName = user?.name.split(" ")[0];
 
   return (
     <header className="bg-white">
@@ -69,10 +87,20 @@ export function Navbar() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <ButtonLink href="/rooms" className="hidden md:inline-flex">
-            Book now
-          </ButtonLink>
+        <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 md:flex">
+            {user ? (
+              <>
+                <span className="text-sm text-muted">Hi, {firstName}</span>
+                <SignOutButton />
+              </>
+            ) : (
+              <Link href="/login" className="text-sm font-semibold hover:text-brand">
+                Sign in
+              </Link>
+            )}
+            <ButtonLink href="/rooms">Book now</ButtonLink>
+          </div>
 
           <button
             type="button"
@@ -109,11 +137,27 @@ export function Navbar() {
                   </li>
                 );
               })}
+              <li className="border-t border-line pt-2">
+                {user ? (
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-base text-muted">Hi, {firstName}</span>
+                    <SignOutButton className="text-base" />
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="block py-3 text-base font-semibold"
+                  >
+                    Sign in
+                  </Link>
+                )}
+              </li>
             </ul>
             <ButtonLink
               href="/rooms"
               onClick={() => setOpen(false)}
-              className="mt-4 w-full"
+              className="mt-2 w-full"
             >
               Book now
             </ButtonLink>
