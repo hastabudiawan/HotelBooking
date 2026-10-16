@@ -11,7 +11,8 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Container } from "./Container";
 
-export type NavUser = { name: string };
+// export type NavUser = { name: string };
+export type NavUser = { name: string; isGuest: boolean };
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -23,7 +24,10 @@ function SignOutButton({ className }: { className?: string }) {
     <form action={logoutAction}>
       <button
         type="submit"
-        className={cn("text-sm font-semibold text-ink hover:text-brand", className)}
+        className={cn(
+          "text-sm font-semibold text-ink hover:text-brand",
+          className,
+        )}
       >
         Sign out
       </button>
@@ -91,11 +95,27 @@ export function Navbar({ user }: { user: NavUser | null }) {
           <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <>
-                <span className="text-sm text-muted">Hi, {firstName}</span>
+                {user.isGuest && (
+                  <Link
+                    href="/account/bookings"
+                    className="text-sm font-semibold hover:text-brand"
+                  >
+                    My bookings
+                  </Link>
+                )}
+                <Link
+                  href="/account"
+                  className="text-sm text-muted hover:text-brand"
+                >
+                  Hi, {firstName}
+                </Link>
                 <SignOutButton />
               </>
             ) : (
-              <Link href="/login" className="text-sm font-semibold hover:text-brand">
+              <Link
+                href="/login"
+                className="text-sm font-semibold hover:text-brand"
+              >
                 Sign in
               </Link>
             )}
@@ -138,11 +158,36 @@ export function Navbar({ user }: { user: NavUser | null }) {
                 );
               })}
               <li className="border-t border-line pt-2">
-                {user ? (
+                {/* {user ? (
                   <div className="flex items-center justify-between py-3">
-                    <span className="text-base text-muted">Hi, {firstName}</span>
+                    <span className="text-base text-muted">
+                      Hi, {firstName}
+                    </span>
                     <SignOutButton className="text-base" />
                   </div>
+                ) : ( */}
+                {user ? (
+                  <>
+                    {user.isGuest && (
+                      <Link
+                        href="/account/bookings"
+                        onClick={() => setOpen(false)}
+                        className="block py-3 text-base font-semibold"
+                      >
+                        My bookings
+                      </Link>
+                    )}
+                    <div className="flex items-center justify-between py-3">
+                      <Link
+                        href="/account"
+                        onClick={() => setOpen(false)}
+                        className="text-base text-muted"
+                      >
+                        Hi, {firstName}
+                      </Link>
+                      <SignOutButton className="text-base" />
+                    </div>
+                  </>
                 ) : (
                   <Link
                     href="/login"

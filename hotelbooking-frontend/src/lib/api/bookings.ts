@@ -35,3 +35,7 @@ export function payBooking(
 export function cancelBooking(token: string, id: number) {
   return apiPost<BookingDto>(`/api/bookings/${id}/cancel`, undefined, { token });
 }
+
+export function getMyBookings(token: string) {
+  return apiGet<BookingDto[]>("/api/bookings/my", { token });
+}

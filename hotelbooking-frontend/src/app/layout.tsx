@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { site } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
 import { getSession } from "@/lib/auth/session";
+import { ROLES } from "@/lib/auth/types";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -53,7 +54,16 @@ export default async function RootLayout({
       className={`${mulish.variable} ${raleway.variable} ${dancing.variable}`}
     >
       <body className="flex min-h-screen flex-col">
-        <Navbar user={session ? { name: session.user.name } : null} />
+        <Navbar
+          user={
+            session
+              ? {
+                  name: session.user.name,
+                  isGuest: session.user.roles.includes(ROLES.guest),
+                }
+              : null
+          }
+        />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>
