@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { site } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site-url";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -24,11 +25,20 @@ const dancing = Dancing_Script({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: `${site.name} | ${site.tagline}`,
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: `${site.name} | ${site.tagline}`,
+    description: site.description,
+    images: [{ url: "/images/hero-home.jpg" }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({

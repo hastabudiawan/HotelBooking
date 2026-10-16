@@ -31,4 +31,12 @@ export const site = {
   // { label: "Instagram", href: "https://instagram.com/akunmu" }
   // Kalau kosong, kolom "Social media" di footer tidak ditampilkan.
   socials: [] as NavItem[],
+
+  // Isi dengan data kamu. Kolom yang dibiarkan kosong ("") tidak ditampilkan.
+  contact: {
+    address: "Street 123, City, Country",
+    phone: "+62 123 4567",
+    email: "info@paradiseview.com",
+    hours: "Front desk open 24 hours",
+  },
 };
