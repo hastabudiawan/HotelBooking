@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Warna dan ukuran khusus Paradise View.
+   Setiap --color-xxx otomatis menjadi utilitas: bg-xxx, text-xxx, border-xxx. */
+@theme {
+  --color-brand: #7c6a46;
+  --color-brand-dark: #66573a;
+  --color-brand-soft: #f3efe6;
+  --color-ink: #1b1b1b;
+  --color-muted: #6b6b6b;
+  --color-surface: #f6f6f6;
+  --color-line: #e4e4e4;
+}
+
+/* Font diambil dari variabel yang dibuat next/font di layout.tsx.
+   "inline" diperlukan karena nilainya merujuk variabel CSS lain. */
+@theme inline {
+  --font-sans: var(--font-mulish);
+  --font-heading: var(--font-raleway);
+  --font-script: var(--font-dancing);
+}
+
+@layer base {
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
+  }
+}
