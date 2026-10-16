@@ -38,3 +38,26 @@ export function searchAvailableRoomTypes({
   });
   return apiGet<AvailableRoomTypeDto[]>(`/api/rooms/available?${query}`);
 }
+
+export type RoomAvailability =
+  | { status: "available"; item: AvailableRoomTypeDto }
+  | { status: "unavailable" }
+  | { status: "invalid"; message: string };
+
+// Cek satu tipe kamar. Error 400 dari backend (tanggal salah) menjadi status "invalid".
+// Error lain (backend mati, 500) dilempar ke error.tsx.
+export async function checkRoomAvailability(
+  slug: string,
+  query: AvailabilityQuery,
+): Promise<RoomAvailability> {
+  try {
+    const results = await searchAvailableRoomTypes(query);
+    const item = results.find((result) => result.slug === slug);
+    return item ? { status: "available", item } : { status: "unavailable" };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 400) {
+      return { status: "invalid", message: error.message };
+    }
+    throw error;
+  }
+}

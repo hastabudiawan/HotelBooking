@@ -29,7 +29,7 @@ export function RoomCard({
 
   return (
     <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
-      <div className="relative aspect-[3/2] bg-surface">
+      <div className="relative aspect-3/2 bg-surface">
         {media.image ? (
           <Image
             src={media.image}
