@@ -34,3 +34,20 @@ export function isIsoDate(value: unknown): value is string {
 export function plural(count: number, singular: string, pluralForm = `${singular}s`) {
   return `${count} ${count === 1 ? singular : pluralForm}`;
 }
+
+// Tambah (atau kurangi) hari pada tanggal yyyy-MM-dd.
+export function addDays(isoDate: string, days: number) {
+  const date = new Date(`${isoDate}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+// Tanggal hari ini di WIB, bentuk yyyy-MM-dd. Format "en-CA" menghasilkan urutan tahun-bulan-hari.
+export function todayInJakarta() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
