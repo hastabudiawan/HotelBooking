@@ -7,6 +7,7 @@ import { site } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
 import { getSession } from "@/lib/auth/session";
 import { ROLES } from "@/lib/auth/types";
+// import { ROLES } from "@/lib/auth/types";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -60,6 +61,10 @@ export default async function RootLayout({
               ? {
                   name: session.user.name,
                   isGuest: session.user.roles.includes(ROLES.guest),
+                  isStaff: session.user.roles.some(
+                    (role) =>
+                      role === ROLES.receptionist || role === ROLES.admin,
+                  ),
                 }
               : null
           }

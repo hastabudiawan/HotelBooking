@@ -4,7 +4,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { decodeJwtPayload, isExpired, rolesOf } from "./jwt";
-import type { AuthResponse, Session } from "./types";
+import { ROLES, type AuthResponse, type Session } from "./types";
 
 export const SESSION_COOKIE = "pv_session";
 
@@ -62,3 +62,6 @@ export async function requireRole(roles: string[], returnTo: string): Promise<Se
   if (!session.user.roles.some((role) => roles.includes(role))) notFound();
   return session;
 }
+
+// Peran yang boleh masuk panel staf.
+export const STAFF_ROLES: string[] = [ROLES.receptionist, ROLES.admin];

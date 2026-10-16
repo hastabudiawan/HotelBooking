@@ -66,3 +66,32 @@ export type PaymentResultDto = {
   payment: PaymentDto;
   booking: BookingDto;
 };
+
+export type RoomStatus = "Available" | "Occupied" | "Cleaning" | "Maintenance";
+
+export type StaffBookingDto = {
+  id: number;
+  bookingCode: string;
+  guestName: string;
+  guestEmail: string;
+  roomId: number;
+  roomNumber: string;
+  roomTypeName: string;
+  checkIn: string;
+  checkOut: string;
+  guestCount: number;
+  totalPrice: number;
+  status: BookingStatus;
+  isPaid: boolean;
+  expiresAt: string | null;
+  createdAt: string;
+  nights: number;
+};
+
+export type AdminRoomDto = {
+  id: number;
+  roomNumber: string;
+  roomTypeId: number;
+  roomTypeName: string;
+  status: RoomStatus;
+};

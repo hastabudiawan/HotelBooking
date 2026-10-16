@@ -33,7 +33,9 @@ export default async function AccountPage() {
 
   const active = bookings.filter((b) => groupOf(b) === "active");
   // Menginap berikutnya: booking aktif dengan tanggal check-in paling awal.
-  const next = [...active].sort((a, b) => a.checkIn.localeCompare(b.checkIn))[0];
+  const next = [...active].sort((a, b) =>
+    a.checkIn.localeCompare(b.checkIn),
+  )[0];
 
   return (
     <Container className="max-w-3xl py-10 md:py-14">
@@ -42,10 +44,14 @@ export default async function AccountPage() {
       <p className="mt-2 text-sm text-muted">{user.email}</p>
 
       {!isGuest && (
-        <p className="mt-8 rounded-md bg-surface px-4 py-3 text-sm">
-          You are signed in with a staff account ({user.roles.join(", ")}). Staff tools are added
-          in a later part.
-        </p>
+        <div className="mt-8 rounded-md bg-surface px-4 py-4 text-sm">
+          <p>
+            You are signed in with a staff account ({user.roles.join(", ")}).
+          </p>
+          <div className="mt-4">
+            <ButtonLink href="/staff">Open front desk</ButtonLink>
+          </div>
+        </div>
       )}
 
       {isGuest && (
@@ -75,11 +81,17 @@ export default async function AccountPage() {
               { label: "Active", value: active.length },
               {
                 label: "Completed",
-                value: bookings.filter((b) => groupOf(b) === "completed").length,
+                value: bookings.filter((b) => groupOf(b) === "completed")
+                  .length,
               },
             ].map((item) => (
-              <div key={item.label} className="rounded-lg bg-brand-soft p-5 text-center">
-                <p className="text-3xl font-bold text-brand-dark">{item.value}</p>
+              <div
+                key={item.label}
+                className="rounded-lg bg-brand-soft p-5 text-center"
+              >
+                <p className="text-3xl font-bold text-brand-dark">
+                  {item.value}
+                </p>
                 <p className="mt-1 text-sm text-muted">{item.label}</p>
               </div>
             ))}

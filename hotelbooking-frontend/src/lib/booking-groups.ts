@@ -9,8 +9,10 @@ export const groupLabels: Record<BookingGroup, string> = {
   closed: "Cancelled or expired",
 };
 
-// Status yang ditampilkan ke tamu: Pending yang batas bayarnya lewat dianggap Expired.
-export function effectiveStatus(booking: BookingDto): BookingStatus {
+export function effectiveStatus(booking: {
+  status: BookingStatus;
+  expiresAt: string | null;
+}): BookingStatus {
   if (
     booking.status === "Pending" &&
     booking.expiresAt !== null &&
