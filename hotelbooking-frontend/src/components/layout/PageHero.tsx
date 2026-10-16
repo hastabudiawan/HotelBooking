@@ -9,7 +9,7 @@ type PageHeroProps = {
 
 export function PageHero({ title, subtitle, image }: PageHeroProps) {
   return (
-    <section className="relative isolate flex min-h-80 items-center justify-center overflow-hidden bg-brand-dark text-center text-white md:min-h-[420px]">
+    <section className="relative isolate flex min-h-80 items-center justify-center overflow-hidden bg-brand-dark text-center text-white md:min-h-105">
       {image && (
         <Image
           src={image}
