@@ -14,22 +14,29 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; reauth?: string }>;
 }) {
-  const next = safeNext((await searchParams).next);
-  if (await getSession()) redirect(next);
+  const params = await searchParams;
+  const next = safeNext(params.next);
+  if (!params.reauth && (await getSession())) redirect(next);
 
   const registerHref =
     next === "/" ? "/register" : `/register?next=${encodeURIComponent(next)}`;
-
   return (
     <AuthCard
       title="Sign in"
-      subtitle="Welcome back. Sign in to book and manage your stay."
+      subtitle={
+        params.reauth
+          ? "Your session has ended. Please sign in again."
+          : "Welcome back. Sign in to book and manage your stay."
+      }
       footer={
         <>
           New to Paradise View?{" "}
-          <Link href={registerHref} className="font-semibold text-brand hover:underline">
+          <Link
+            href={registerHref}
+            className="font-semibold text-brand hover:underline"
+          >
             Create an account
           </Link>
         </>

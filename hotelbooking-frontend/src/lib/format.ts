@@ -51,3 +51,23 @@ export function todayInJakarta() {
     day: "2-digit",
   }).format(new Date());
 }
+
+const dateTimeFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Jakarta",
+});
+
+// "2026-11-10T08:30:00Z" -> "10 Nov 2026, 15:30 WIB"
+export function formatDateTime(isoUtc: string) {
+  return `${dateTimeFormat.format(new Date(isoUtc))} WIB`;
+}
+
+// Apakah waktu UTC itu sudah lewat dari sekarang. Dipisah menjadi fungsi supaya
+// komponen tidak memanggil Date.now() langsung saat render.
+export function hasPassed(isoUtc: string) {
+  return new Date(isoUtc).getTime() <= Date.now();
+}

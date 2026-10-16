@@ -14,14 +14,14 @@ export const metadata: Metadata = {
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; reauth?: string }>;
 }) {
-  const next = safeNext((await searchParams).next);
-  if (await getSession()) redirect(next);
+  const params = await searchParams;
+  const next = safeNext(params.next);
+  if (!params.reauth && (await getSession())) redirect(next);
 
   const loginHref =
     next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
-
   return (
     <AuthCard
       title="Create account"
@@ -29,7 +29,10 @@ export default async function RegisterPage({
       footer={
         <>
           Already have an account?{" "}
-          <Link href={loginHref} className="font-semibold text-brand hover:underline">
+          <Link
+            href={loginHref}
+            className="font-semibold text-brand hover:underline"
+          >
             Sign in
           </Link>
         </>

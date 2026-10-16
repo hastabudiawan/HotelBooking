@@ -22,3 +22,47 @@ export type AvailableRoomTypeDto = {
   nights: number;
   totalPrice: number;
 };
+
+export type BookingStatus =
+  | "Pending"
+  | "Confirmed"
+  | "CheckedIn"
+  | "CheckedOut"
+  | "Expired"
+  | "Cancelled"
+  | "NoShow";
+
+export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Refunded";
+
+export type PaymentMethod = "Transfer" | "QRIS" | "Kartu";
+
+export type BookingDto = {
+  id: number;
+  bookingCode: string;
+  roomId: number;
+  roomNumber: string;
+  roomTypeName: string;
+  roomTypeSlug: string;
+  checkIn: string; // yyyy-MM-dd
+  checkOut: string; // yyyy-MM-dd
+  guestCount: number;
+  totalPrice: number;
+  status: BookingStatus;
+  expiresAt: string | null; // UTC, berakhiran Z
+  createdAt: string;
+  nights: number;
+};
+
+export type PaymentDto = {
+  id: number;
+  bookingId: number;
+  amount: number;
+  method: string;
+  status: PaymentStatus;
+  paidAt: string | null;
+};
+
+export type PaymentResultDto = {
+  payment: PaymentDto;
+  booking: BookingDto;
+};
