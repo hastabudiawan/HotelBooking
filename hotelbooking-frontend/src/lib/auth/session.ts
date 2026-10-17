@@ -13,7 +13,12 @@ export async function setSession(auth: AuthResponse) {
   store.set(SESSION_COOKIE, auth.token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    // secure: process.env.NODE_ENV === "production",
+    // Bawaan: Secure di produksi. COOKIE_SECURE=false hanya untuk mencoba image produksi lewat http://localhost.
+    secure:
+      process.env.COOKIE_SECURE !== undefined
+        ? process.env.COOKIE_SECURE === "true"
+        : process.env.NODE_ENV === "production",
     path: "/",
     // Cookie berakhir bersamaan dengan token.
     expires: new Date(auth.expiresAtUtc),
@@ -57,7 +62,10 @@ export async function requireUser(returnTo: string): Promise<Session> {
 }
 
 // Untuk halaman khusus peran (resepsionis, admin). Peran yang salah ditampilkan sebagai 404.
-export async function requireRole(roles: string[], returnTo: string): Promise<Session> {
+export async function requireRole(
+  roles: string[],
+  returnTo: string,
+): Promise<Session> {
   const session = await requireUser(returnTo);
   if (!session.user.roles.some((role) => roles.includes(role))) notFound();
   return session;

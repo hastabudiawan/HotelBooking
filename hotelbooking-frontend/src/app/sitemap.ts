@@ -2,8 +2,9 @@ import type { MetadataRoute } from "next";
 import { getRoomTypes } from "@/lib/api/rooms";
 import { getSiteUrl } from "@/lib/site-url";
 
-// Dibuat ulang paling cepat sekali per jam.
-export const revalidate = 3600;
+// Dibuat saat diminta, bukan saat build. Saat docker build, API belum menyala, jadi sitemap
+// yang dibekukan saat build tidak akan berisi halaman kamar.
+export const dynamic = "force-dynamic";
 
 const staticPaths = ["", "/rooms", "/explore", "/about", "/contact"];
 
