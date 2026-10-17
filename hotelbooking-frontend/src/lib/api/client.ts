@@ -36,6 +36,8 @@ type RequestOptions = {
   // Detik data GET boleh dipakai ulang dari cache. Diabaikan kalau ada token
   // (data pribadi tidak boleh di-cache bersama).
   revalidate?: number;
+  // Penanda cache. Dipakai revalidateTag/updateTag untuk membuang data ini.
+  tags?: string[];
 };
 
 export async function apiRequest<T>(
@@ -47,7 +49,7 @@ export async function apiRequest<T>(
     throw new Error("API_URL belum diatur. Isi di .env.local lalu restart npm run dev.");
   }
 
-  const { method = "GET", body, token, revalidate } = options;
+  const { method = "GET", body, token, revalidate, tags } = options;
 
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
@@ -60,7 +62,7 @@ export async function apiRequest<T>(
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
     ...(cacheable
-      ? { next: { revalidate } }
+      ? { next: { revalidate, tags } }
       : { cache: "no-store" as const }),
   });
 
@@ -72,7 +74,7 @@ export async function apiRequest<T>(
   return (await response.json()) as T;
 }
 
-type ReadOptions = Pick<RequestOptions, "token" | "revalidate">;
+type ReadOptions = Pick<RequestOptions, "token" | "revalidate" | "tags">;
 
 export function apiGet<T>(path: string, options: ReadOptions = {}) {
   return apiRequest<T>(path, { ...options, method: "GET" });

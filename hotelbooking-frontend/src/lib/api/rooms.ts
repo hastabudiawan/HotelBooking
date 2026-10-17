@@ -4,7 +4,10 @@ import { ApiError, apiGet } from "./client";
 import type { AvailableRoomTypeDto, RoomTypeDto } from "./types";
 
 export function getRoomTypes() {
-  return apiGet<RoomTypeDto[]>("/api/room-types", { revalidate: 60 });
+  return apiGet<RoomTypeDto[]>("/api/room-types", {
+    revalidate: 60,
+    tags: ["room-types"],
+  });
 }
 
 // Mengembalikan null kalau slug tidak ada (dipakai halaman detail di part 4).
@@ -12,7 +15,7 @@ export async function getRoomTypeBySlug(slug: string) {
   try {
     return await apiGet<RoomTypeDto>(
       `/api/room-types/${encodeURIComponent(slug)}`,
-      { revalidate: 60 },
+      { revalidate: 60, tags: ["room-types"] },
     );
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null;

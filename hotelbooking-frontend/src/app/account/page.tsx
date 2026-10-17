@@ -45,11 +45,14 @@ export default async function AccountPage() {
 
       {!isGuest && (
         <div className="mt-8 rounded-md bg-surface px-4 py-4 text-sm">
-          <p>
-            You are signed in with a staff account ({user.roles.join(", ")}).
-          </p>
-          <div className="mt-4">
+          <p>You are signed in with a staff account ({user.roles.join(", ")}).</p>
+          <div className="mt-4 flex flex-wrap gap-3">
             <ButtonLink href="/staff">Open front desk</ButtonLink>
+            {user.roles.includes(ROLES.admin) && (
+              <ButtonLink href="/admin" variant="outline">
+                Open admin
+              </ButtonLink>
+            )}
           </div>
         </div>
       )}

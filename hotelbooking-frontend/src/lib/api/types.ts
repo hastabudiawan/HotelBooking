@@ -95,3 +95,10 @@ export type AdminRoomDto = {
   roomTypeName: string;
   status: RoomStatus;
 };
+
+export type UserProfileDto = {
+  id: number;
+  fullName: string;
+  email: string;
+  roles: string[];
+};

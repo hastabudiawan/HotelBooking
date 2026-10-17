@@ -11,7 +11,12 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Container } from "./Container";
 
-export type NavUser = { name: string; isGuest: boolean; isStaff: boolean };
+export type NavUser = {
+  name: string;
+  isGuest: boolean;
+  isStaff: boolean;
+  isAdmin: boolean;
+};
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -95,8 +100,19 @@ export function Navbar({ user }: { user: NavUser | null }) {
             {user ? (
               <>
                 {user.isStaff && (
-                  <Link href="/staff" className="text-sm font-semibold hover:text-brand">
+                  <Link
+                    href="/staff"
+                    className="text-sm font-semibold hover:text-brand"
+                  >
                     Front desk
+                  </Link>
+                )}
+                {user.isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-sm font-semibold hover:text-brand"
+                  >
+                    Admin
                   </Link>
                 )}
                 {user.isGuest && (
@@ -171,6 +187,15 @@ export function Navbar({ user }: { user: NavUser | null }) {
                         className="block py-3 text-base font-semibold"
                       >
                         Front desk
+                      </Link>
+                    )}
+                    {user.isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="block py-3 text-base font-semibold"
+                      >
+                        Admin
                       </Link>
                     )}
                     {user.isGuest && (

@@ -30,6 +30,7 @@ export const ROLES = {
 // State yang dikembalikan Server Action ke form.
 export type FormState = {
   error?: string;
+  message?: string;
   // Nilai yang diketik, supaya tidak hilang saat ada error (password tidak pernah dikirim balik).
-  values?: { fullName?: string; email?: string };
+  values?: Record<string, string | undefined>;
 };

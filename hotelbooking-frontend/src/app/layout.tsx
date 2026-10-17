@@ -65,6 +65,7 @@ export default async function RootLayout({
                     (role) =>
                       role === ROLES.receptionist || role === ROLES.admin,
                   ),
+                  isAdmin: session.user.roles.includes(ROLES.admin),
                 }
               : null
           }

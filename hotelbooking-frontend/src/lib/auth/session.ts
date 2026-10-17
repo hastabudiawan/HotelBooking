@@ -65,3 +65,6 @@ export async function requireRole(roles: string[], returnTo: string): Promise<Se
 
 // Peran yang boleh masuk panel staf.
 export const STAFF_ROLES: string[] = [ROLES.receptionist, ROLES.admin];
+
+// Peran yang boleh masuk panel admin.
+export const ADMIN_ROLES: string[] = [ROLES.admin];
