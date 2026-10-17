@@ -9,6 +9,7 @@ const links = [
   { href: "/admin/room-types", label: "Room types" },
   { href: "/admin/rooms", label: "Rooms" },
   { href: "/admin/staff", label: "Staff" },
+  { href: "/admin/reports", label: "Reports" },
 ];
 
 export function AdminNav() {

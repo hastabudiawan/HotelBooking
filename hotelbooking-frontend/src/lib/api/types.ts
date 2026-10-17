@@ -102,3 +102,22 @@ export type UserProfileDto = {
   email: string;
   roles: string[];
 };
+
+export type OccupancyDayDto = {
+  date: string; // yyyy-MM-dd
+  roomsSold: number;
+  totalRooms: number;
+  occupancyRate: number; // persen, 0 sampai 100
+  revenue: number;
+};
+
+export type OccupancyReportDto = {
+  from: string;
+  to: string;
+  totalRooms: number;
+  roomNightsSold: number;
+  roomNightsAvailable: number;
+  occupancyRate: number;
+  revenue: number;
+  days: OccupancyDayDto[];
+};

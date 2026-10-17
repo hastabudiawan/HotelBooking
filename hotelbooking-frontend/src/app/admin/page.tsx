@@ -10,6 +10,7 @@ const shortcuts = [
   { href: "/admin/room-types", title: "Room types", text: "Names, prices, capacity, and descriptions." },
   { href: "/admin/rooms", title: "Rooms", text: "Add, rename, or remove physical rooms." },
   { href: "/admin/staff", title: "Staff", text: "Create receptionist accounts." },
+  { href: "/admin/reports", title: "Reports", text: "Occupancy and revenue by day." },
 ];
 
 export default async function AdminOverviewPage() {
