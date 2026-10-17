@@ -40,6 +40,7 @@ async function runSearch(query: AvailabilityQuery): Promise<SearchOutcome> {
         name: item.name,
         capacity: item.capacity,
         pricePerNight: item.pricePerNight,
+        imageUrl: item.imageUrl,
         availableRooms: item.availableRooms,
         nights: item.nights,
         totalPrice: item.totalPrice,
@@ -75,6 +76,7 @@ export default async function RoomsPage({ searchParams }: PageProps) {
           name: item.name,
           capacity: item.capacity,
           pricePerNight: item.basePrice,
+          imageUrl: item.imageUrl,
         }))
       : outcome.ok
         ? outcome.rooms

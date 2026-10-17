@@ -27,6 +27,7 @@ export async function FeaturedRooms() {
                   name: item.name,
                   capacity: item.capacity,
                   pricePerNight: item.basePrice,
+                  imageUrl: item.imageUrl,
                 }}
               />
             ))}

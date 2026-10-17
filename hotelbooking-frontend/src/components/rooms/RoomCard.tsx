@@ -1,9 +1,8 @@
 import { BedDouble } from "lucide-react";
-import Image from "next/image";
+import { RoomImage } from "@/components/rooms/RoomImage";
 import { ButtonLink } from "@/components/ui/Button";
 import { formatRupiah, plural } from "@/lib/format";
-import { amenityInfo, getRoomMedia } from "@/lib/room-media";
-
+import { amenityInfo, getRoomMedia, resolveRoomImage } from "@/lib/room-media";
 export type RoomCardData = {
   slug: string;
   name: string;
@@ -13,6 +12,8 @@ export type RoomCardData = {
   availableRooms?: number;
   nights?: number;
   totalPrice?: number;
+  // Dari backend. Kalau kosong atau tidak valid, dipakai foto bawaan menurut slug.
+  imageUrl?: string | null;
 };
 
 export function RoomCard({
@@ -24,19 +25,18 @@ export function RoomCard({
   query?: string;
 }) {
   const media = getRoomMedia(room.slug);
+  const image = resolveRoomImage(room.slug, room.imageUrl);
   const href = `/rooms/${room.slug}${query ? `?${query}` : ""}`;
   const isSearchResult = room.availableRooms !== undefined;
 
   return (
     <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
       <div className="relative aspect-3/2 bg-surface">
-        {media.image ? (
-          <Image
-            src={media.image}
+        {image ? (
+          <RoomImage
+            src={image}
             alt={`${room.name} room`}
-            fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-line">
@@ -60,11 +60,13 @@ export function RoomCard({
           <span className="text-sm font-normal text-muted">/ night</span>
         </p>
 
-        {isSearchResult && room.totalPrice !== undefined && room.nights !== undefined && (
-          <p className="mt-1 text-sm text-muted">
-            {formatRupiah(room.totalPrice)} for {plural(room.nights, "night")}
-          </p>
-        )}
+        {isSearchResult &&
+          room.totalPrice !== undefined &&
+          room.nights !== undefined && (
+            <p className="mt-1 text-sm text-muted">
+              {formatRupiah(room.totalPrice)} for {plural(room.nights, "night")}
+            </p>
+          )}
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4">
           <ul className="flex gap-2" aria-label="Amenities">

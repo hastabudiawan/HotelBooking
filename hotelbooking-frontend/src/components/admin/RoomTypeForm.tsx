@@ -17,7 +17,6 @@ export function RoomTypeForm({ initial }: { initial?: RoomTypeDto }) {
   return (
     <form action={formAction} className="max-w-xl space-y-4" noValidate>
       {initial && <input type="hidden" name="id" value={initial.id} />}
-      {initial && <input type="hidden" name="imageUrl" value={initial.imageUrl ?? ""} />}
 
       <Field
         label="Name"
@@ -36,6 +35,14 @@ export function RoomTypeForm({ initial }: { initial?: RoomTypeDto }) {
             ? "Part of the page address (/rooms/slug). Changing it breaks old links."
             : "Lowercase letters, numbers, and hyphens. Optional."
         }
+      />
+
+      <Field
+        label="Image URL"
+        name="imageUrl"
+        defaultValue={values?.imageUrl ?? initial?.imageUrl ?? ""}
+        placeholder="https://..."
+        hint="A full https:// address, or a path in this site such as /images/rooms/family.jpg. Leave empty to use the default photo."
       />
 
       <div>

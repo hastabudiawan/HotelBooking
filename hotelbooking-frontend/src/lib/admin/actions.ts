@@ -16,6 +16,7 @@ import { errorMessage, redirectIfUnauthorized } from "@/lib/auth/guard";
 import { ADMIN_ROLES, getSession } from "@/lib/auth/session";
 import type { FormState } from "@/lib/auth/types";
 import { EMAIL_PATTERN, passwordProblem } from "@/lib/auth/validation";
+import { MAX_IMAGE_URL_LENGTH, isValidImageUrl } from "@/lib/image-url";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -57,24 +58,40 @@ export async function saveRoomTypeAction(
     description: text(formData, "description"),
     basePrice: text(formData, "basePrice"),
     capacity: text(formData, "capacity"),
+    imageUrl: text(formData, "imageUrl"),
   };
 
   const basePrice = Number(values.basePrice);
   const capacity = Number(values.capacity);
 
   if (values.name === "") return { error: "Enter a name.", values };
-  if (values.name.length > 100) return { error: "The name is too long (max 100).", values };
+  if (values.name.length > 100)
+    return { error: "The name is too long (max 100).", values };
   if (values.slug !== "" && !SLUG_PATTERN.test(values.slug)) {
     return {
-      error: "The slug may only contain lowercase letters, numbers, and hyphens.",
+      error:
+        "The slug may only contain lowercase letters, numbers, and hyphens.",
       values,
     };
   }
   if (values.description.length > 2000) {
     return { error: "The description is too long (max 2000).", values };
   }
-  if (!Number.isInteger(basePrice) || basePrice < 1 || basePrice > 100_000_000) {
-    return { error: "Enter a price in Rupiah between 1 and 100,000,000.", values };
+  if (values.imageUrl !== "" && !isValidImageUrl(values.imageUrl)) {
+    return {
+      error: `Enter a full https:// address (max ${MAX_IMAGE_URL_LENGTH} characters), or a path starting with a single /.`,
+      values,
+    };
+  }
+  if (
+    !Number.isInteger(basePrice) ||
+    basePrice < 1 ||
+    basePrice > 100_000_000
+  ) {
+    return {
+      error: "Enter a price in Rupiah between 1 and 100,000,000.",
+      values,
+    };
   }
   if (!Number.isInteger(capacity) || capacity < 1 || capacity > 10) {
     return { error: "Capacity must be between 1 and 10 guests.", values };
@@ -86,8 +103,7 @@ export async function saveRoomTypeAction(
     description: values.description,
     basePrice,
     capacity,
-    // PUT mengganti seluruh data, jadi nilai lama dikirim ulang.
-    imageUrl: text(formData, "imageUrl") || null,
+    imageUrl: values.imageUrl || null,
   };
 
   try {
@@ -112,7 +128,8 @@ export async function deleteRoomTypeAction(
   const token = await adminToken();
 
   const id = Number(text(formData, "id"));
-  if (!Number.isInteger(id) || id <= 0) return { error: "Room type not found." };
+  if (!Number.isInteger(id) || id <= 0)
+    return { error: "Room type not found." };
 
   try {
     await deleteRoomType(token, id);
@@ -142,7 +159,8 @@ export async function saveRoomAction(
   };
   const roomTypeId = Number(values.roomTypeId);
 
-  if (values.roomNumber === "") return { error: "Enter a room number.", values };
+  if (values.roomNumber === "")
+    return { error: "Enter a room number.", values };
   if (values.roomNumber.length > 10) {
     return { error: "The room number is too long (max 10).", values };
   }
@@ -202,7 +220,8 @@ export async function createStaffAction(
   const values = { fullName, email };
 
   if (fullName === "") return { error: "Enter the full name.", values };
-  if (!EMAIL_PATTERN.test(email)) return { error: "Enter a valid email address.", values };
+  if (!EMAIL_PATTERN.test(email))
+    return { error: "Enter a valid email address.", values };
 
   const problem = passwordProblem(password);
   if (problem) return { error: problem, values };

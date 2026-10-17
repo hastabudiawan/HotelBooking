@@ -1,6 +1,5 @@
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BedDouble } from "lucide-react";
@@ -8,7 +7,8 @@ import { Container } from "@/components/layout/Container";
 import { BookingPanel } from "@/components/rooms/BookingPanel";
 import { checkRoomAvailability, getRoomTypeBySlug } from "@/lib/api/rooms";
 import { isIsoDate } from "@/lib/format";
-import { amenityInfo, getRoomMedia } from "@/lib/room-media";
+import { RoomImage } from "@/components/rooms/RoomImage";
+import { amenityInfo, getRoomMedia, resolveRoomImage } from "@/lib/room-media";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -19,7 +19,9 @@ type PageProps = {
   }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const room = await getRoomTypeBySlug(slug);
   if (!room) return { title: "Room not found" };
@@ -30,7 +32,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function RoomDetailPage({ params, searchParams }: PageProps) {
+export default async function RoomDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { slug } = await params;
   const query = await searchParams;
 
@@ -47,9 +52,13 @@ export default async function RoomDetailPage({ params, searchParams }: PageProps
       ? { checkIn: query.checkIn, checkOut: query.checkOut, guests }
       : null;
 
-  const availability = search ? await checkRoomAvailability(slug, search) : null;
+  const availability = search
+    ? await checkRoomAvailability(slug, search)
+    : null;
 
   const media = getRoomMedia(slug);
+
+  const image = resolveRoomImage(slug, room.imageUrl);
 
   // Kembali ke daftar dengan pencarian yang sama.
   const backHref = search
@@ -73,14 +82,12 @@ export default async function RoomDetailPage({ params, searchParams }: PageProps
       <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start">
         <div>
           <div className="relative aspect-16/10 overflow-hidden rounded-lg bg-surface">
-            {media.image ? (
-              <Image
-                src={media.image}
+            {image ? (
+              <RoomImage
+                src={image}
                 alt={`${room.name} room`}
-                fill
                 priority
                 sizes="(min-width: 1024px) 760px, 100vw"
-                className="object-cover"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-line">
