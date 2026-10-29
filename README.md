@@ -1,18 +1,19 @@
-# Hotel Booking
+# Paradise View — Hotel Booking
 
 ![CI Backend](https://github.com/hastabudiawan/HotelBooking-Backend/actions/workflows/ci.yml/badge.svg)
 ![CI Frontend](https://github.com/hastabudiawan/HotelBooking-Frontend/actions/workflows/ci.yml/badge.svg)
 
 Aplikasi pemesanan hotel lengkap: **backend ASP.NET Core Web API (.NET 10)** dengan arsitektur berlapis, **Entity Framework Core**, dan **SQL Server**, serta **frontend Next.js 16 (React 19, TypeScript, Tailwind CSS v4)**. Project portofolio untuk mendemonstrasikan desain backend .NET (pemodelan data, alur status booking, pencegahan double booking, aturan ketersediaan kamar) dan frontend modern yang terhubung ke API itu untuk tiga peran: tamu, resepsionis, dan admin.
 
-Project ini terdiri dari dua repository. **README ini sama di keduanya.**
+Project ini terdiri dari tiga repository. **README ini sama di ketiganya.** Backend dan web dijalankan bersama lewat Docker Compose (bagian di bawah); aplikasi mobile berdiri sendiri dan memakai API yang sama.
 
 | Repository | Isi | Folder lokal yang disarankan |
 |---|---|---|
 | [HotelBooking-Backend](https://github.com/hastabudiawan/HotelBooking-Backend) | API, database, tes, Docker backend | `HotelBooking-Backend` |
 | [HotelBooking-Frontend](https://github.com/hastabudiawan/HotelBooking-Frontend) | Situs web Next.js, Docker frontend, compose gabungan | `HotelBooking-Frontend` |
+| [HotelBooking-Mobile](https://github.com/hastabudiawan/HotelBooking-Mobile) | Aplikasi Flutter (iOS dan Android) | `HotelBooking-Mobile` |
 
-> **Status:** backend dan web lengkap. Dari pencarian kamar sampai laporan okupansi sudah berjalan. Backend diuji dengan 61 tes otomatis (unit dan integrasi), frontend dengan 39 tes untuk logika inti, dan seluruh sistem bisa dijalankan dengan satu perintah Docker Compose di Windows, macOS, dan Linux. Aplikasi mobile (Flutter) menyusul.
+> **Status:** backend, web, dan aplikasi mobile lengkap. Dari pencarian kamar sampai laporan okupansi sudah berjalan. Backend diuji dengan 61 tes otomatis (unit dan integrasi), frontend dengan 39 tes untuk logika inti, dan seluruh sistem bisa dijalankan dengan satu perintah Docker Compose di Windows, macOS, dan Linux. Aplikasi mobile **Flutter** untuk tamu (cari kamar, booking, bayar, riwayat) ada di repository ketiga dan punya 73 tes otomatis; cara menjalankannya ada di README repo itu.
 
 <!-- Ganti dengan tangkapan layar nyata, simpan di docs/screenshots/ -->
 ![Beranda](docs/screenshots/home.png)
@@ -969,3 +970,10 @@ Server dengan SQL Server di dalamnya sebaiknya punya RAM minimal 4 GB. Cadangkan
 - Kalau ada password yang terlanjur tersebar, ganti: untuk `hotel-sqlserver`, hapus dan buat ulang containernya, lalu perbarui user-secrets. Untuk compose, ubah `.env` lalu `down -v`.
 - Backend menjadi penentu keamanan. Pengecekan peran di frontend hanya mengatur tampilan.
 - Di server sungguhan: gunakan HTTPS dan `COOKIE_SECURE=true`, jangan buka port database dan API ke internet.
+
+
+## Penulis
+
+Dibuat oleh **Hasta**.
+
+- GitHub: [@hastabudiawan](https://github.com/hastabudiawan)
