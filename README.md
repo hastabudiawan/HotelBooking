@@ -12,9 +12,6 @@ Project ini terdiri dari tiga repository. **README ini sama di ketiganya.** Back
 
 > **Status:** backend, web, dan aplikasi mobile lengkap. Dari pencarian kamar sampai laporan okupansi sudah berjalan. Backend diuji dengan 61 tes otomatis (unit dan integrasi), frontend dengan 39 tes untuk logika inti, dan seluruh sistem bisa dijalankan dengan satu perintah Docker Compose di Windows, macOS, dan Linux. Aplikasi mobile **Flutter** untuk tamu (cari kamar, booking, bayar, riwayat) ada di repository ketiga dan punya 73 tes otomatis; cara menjalankannya ada di README repo itu.
 
-<!-- Ganti dengan tangkapan layar nyata, simpan di docs/screenshots/ -->
-![Beranda](docs/screenshots/home.png)
-
 ## Coba dengan cepat
 
 Cukup **Docker** dan **Git**. Tidak perlu memasang .NET, Node, atau SQL Server. Letakkan kedua repo **berdampingan** dalam satu folder.
