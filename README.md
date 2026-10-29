@@ -1,8 +1,5 @@
 # Paradise View — Hotel Booking
 
-![CI Backend](https://github.com/hastabudiawan/HotelBooking-Backend/actions/workflows/ci.yml/badge.svg)
-![CI Frontend](https://github.com/hastabudiawan/HotelBooking-Frontend/actions/workflows/ci.yml/badge.svg)
-
 Aplikasi pemesanan hotel lengkap: **backend ASP.NET Core Web API (.NET 10)** dengan arsitektur berlapis, **Entity Framework Core**, dan **SQL Server**, serta **frontend Next.js 16 (React 19, TypeScript, Tailwind CSS v4)**. Project portofolio untuk mendemonstrasikan desain backend .NET (pemodelan data, alur status booking, pencegahan double booking, aturan ketersediaan kamar) dan frontend modern yang terhubung ke API itu untuk tiga peran: tamu, resepsionis, dan admin.
 
 Project ini terdiri dari tiga repository. **README ini sama di ketiganya.** Backend dan web dijalankan bersama lewat Docker Compose (bagian di bawah); aplikasi mobile berdiri sendiri dan memakai API yang sama.
